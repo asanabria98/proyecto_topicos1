@@ -4,17 +4,54 @@ library(shinydashboard)
 library(tidyverse)
 
 historico_dolar <- readRDS("historico_dolar.RDS")
-grafico_casos <- readRDS("grafico_casos.RDS")
-grafico_hospitalizados <- readRDS("grafico_hospitalizados.RDS")
-grafico_provincia <- readRDS("grafico_provincia.RDS")
+#grafico_casos <- readRDS("grafico_casos.RDS")
+#grafico_hospitalizados <- readRDS("grafico_hospitalizados.RDS")
+#grafico_provincia <- readRDS("grafico_provincia.RDS")
 datos_economicos <- data.frame(x = seq(50),
                                y = rnorm(50, 10, 3),
                                z = rnorm(50, 11, 2),
-                               w = rnorm(50, 9, 2))
-datos_covid <- data.frame(x = seq(50),
-                          y = rnorm(50, 10, 3),
-                          z = rnorm(50, 11, 2),
-                          w = rnorm(50, 9, 2))
+                               w = rnorm(50, 9, 2),
+                               u = rnorm(50, 9, 1),
+                               v = rnorm(50, 12, 4))
+graf_var_ventadolar <- datos_economicos %>% 
+  e_charts(x) %>% 
+  e_line(y) %>% 
+  e_theme("infographic") %>% 
+  e_datazoom() %>% 
+  e_legend(right = "50")
+
+graf_var_compradolar <- datos_economicos %>% 
+  e_charts(x) %>% 
+  e_line(z) %>% 
+  e_theme("infographic") %>% 
+  e_datazoom() %>% 
+  e_legend(right = "50")
+
+graf_var_inflacion <- datos_economicos %>% 
+  e_charts(x) %>% 
+  e_line(w) %>% 
+  e_theme("infographic") %>% 
+  e_datazoom() %>% 
+  e_legend(right = "50")
+
+graf_var_import <- datos_economicos %>% 
+  e_charts(x) %>% 
+  e_line(u) %>% 
+  e_theme("infographic") %>% 
+  e_datazoom() %>% 
+  e_legend(right = "50")
+
+graf_var_export <- datos_economicos %>% 
+  e_charts(x) %>% 
+  e_line(v) %>% 
+  e_theme("infographic") %>% 
+  e_datazoom() %>% 
+  e_legend(right = "50")
+
+graf_covid_diario <- readRDS("graf_covid_diario.RDS")
+
+graf_covid_acum <- readRDS("graf_covid_acum.RDS")
+
 
 #server
 shinyServer(function(input, output, session){
@@ -149,14 +186,55 @@ shinyServer(function(input, output, session){
   
   # Grafico variable economica --------------------------------------------------------------------------
   
+  output$titulo_graf_var <- renderText({
+    
+    if (input$variables == "Tipo de cambio: Venta $") {
+      "Tipo de cambio: Venta del $"
+    } else if (input$variables == "Tipo de cambio: Compra $") {
+      "Tipo de cambio: Compra $"
+    } else if (input$variables == "Inflación") {
+      "Inflación comercial"
+    } else if (input$variables == "Importaciones") {
+      "Importaciones (CIF)"
+    } else if (input$variables == "Exportaciones") {
+      "Exportaciones (FOB)"
+    } 
+    
+  })
+  
   output$graf_var <- renderEcharts4r({
     
-    datos_economicos %>% 
-      e_charts(x) %>% 
-      e_line(z) %>% 
-      e_area(w) %>% 
-      e_theme("infographic") %>% 
-      e_datazoom()
+    if (input$variables == "Tipo de cambio: Venta $") {
+      graf_var_ventadolar
+    } else if (input$variables == "Tipo de cambio: Compra $") {
+      graf_var_compradolar
+    } else if (input$variables == "Inflación"){
+      graf_var_inflacion
+    } else if (input$variables == "Importaciones"){
+      graf_var_import
+    } else if (input$variables == "Exportaciones"){
+      graf_var_export
+    }
+    
+  })
+  
+  # Grafico graficos covid --------------------------------------------------------------------------
+  
+  output$titulo_graf_covid <- renderText({
+    if (input$opciones_graf_covid == "Datos acumulados") {
+      "Acumulado de infectados, recuperados y fallecidos"
+    } else if (input$opciones_graf_covid == "Datos diarios") {
+      "Nuevos infectados, recuperados y fallecidos por día"
+    } 
+  })
+  
+  output$graf_covid <- renderEcharts4r({
+    
+    if (input$opciones_graf_covid == "Datos acumulados") {
+      graf_covid_acum
+    } else if (input$opciones_graf_covid == "Datos diarios") {
+      graf_covid_diario
+    } 
     
   })
   
