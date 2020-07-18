@@ -143,7 +143,41 @@ shinyUI(
                   )
                 )
         ),
-        
+        tabItem("modelos",
+                h3("Tipo cambio de compra y de venta del dólar de USA"),
+                selectInput(inputId = "op_modelos",
+                            label = "Seleccione un modelo",
+                            choices = c("Red Neuronal Autorregresiva",
+                                        "ARIMA",
+                                        "Naive"),
+                            width = 1000),
+                fluidRow(
+                  conditionalPanel(
+                    condition = "input.op_modelos == 'Red Neuronal Autorregresiva'",
+                    echarts4rOutput("grafico_prediccion_red"),
+                    h4(strong("Metricas de desempeño para la variable Compra")),
+                    htmlOutput("tabla_red_compra"),
+                    h4(strong("Metricas de desempeño para la variable Venta")),
+                    htmlOutput("tabla_red_venta")
+                  ),
+                  conditionalPanel(
+                    condition = "input.op_modelos == 'ARIMA'",
+                    echarts4rOutput("grafico_prediccion_arima"),
+                    h4(strong("Metricas de desempeño para la variable Compra")),
+                    htmlOutput("tabla_arima_compra"),
+                    h4(strong("Metricas de desempeño para la variable Venta")),
+                    htmlOutput("tabla_arima_venta")
+                  ),
+                  conditionalPanel(
+                    condition = "input.op_modelos == 'Naive'",
+                    echarts4rOutput("grafico_prediccion_naive"),
+                    h4(strong("Metricas de desempeño para la variable Compra")),
+                    htmlOutput("tabla_naive_compra"),
+                    h4(strong("Metricas de desempeño para la variable Venta")),
+                    htmlOutput("tabla_naive_venta")
+                  )
+                )
+        ),
         tabItem("general",
           h3("Tipo de cambio al dia de hoy"),
           fluidRow(
