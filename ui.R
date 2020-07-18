@@ -112,6 +112,8 @@ shinyUI(
                     )
                   )
                 ),
+                # Fila y columna de series de tiempo --------------------------------------------------------------------------
+                
                 h3("Series de tiempo"),
                 fluidRow(
                   column(
@@ -121,7 +123,22 @@ shinyUI(
                         solidHeader = TRUE,
                         width = NULL,
                         status = "primary",
+                        h4(textOutput(outputId = "titulo_graf_var")),
                         echarts4rOutput("graf_var")
+                    ),
+                    box(title = "Grafico de variables asociadas al COVID-19",
+                        collapsible = TRUE,
+                        solidHeader = TRUE,
+                        width = NULL,
+                        status = "primary",
+                        selectInput(inputId = "opciones_graf_covid",
+                                    label = "Elija el tipo de datos a visualizar:",
+                                    choices = c("Datos acumulados",
+                                                "Datos diarios"
+                                                )
+                                    ),
+                        h4(textOutput(outputId = "titulo_graf_covid")),
+                        echarts4rOutput("graf_covid")
                     )
                   )
                 )
