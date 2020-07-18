@@ -2,11 +2,23 @@
 library(shiny)
 library(shinydashboard)
 library(tidyverse)
+library(plotly)
+library(echarts4r)
 
 historico_dolar <- readRDS("historico_dolar.RDS")
 #grafico_casos <- readRDS("grafico_casos.RDS")
 #grafico_hospitalizados <- readRDS("grafico_hospitalizados.RDS")
 #grafico_provincia <- readRDS("grafico_provincia.RDS")
+grafico_prediccion_red <- readRDS("grafico_prediccion_red.RDS")
+tabla_red_compra <- readRDS("tabla_red_compra.RDS")
+tabla_red_venta <- readRDS("tabla_red_venta.RDS")
+grafico_prediccion_arima <- readRDS("grafico_prediccion_arima.RDS")
+tabla_arima_venta <- readRDS("tabla_arima_venta.RDS")
+tabla_arima_compra <- readRDS("tabla_arima_compra.RDS")
+grafico_prediccion_naive <- readRDS("grafico_prediccion_naive.RDS")
+tabla_naive_compra <- readRDS("tabla_naive_compra.RDS")
+tabla_naive_venta <- readRDS("tabla_naive_venta.RDS")
+
 datos_economicos <- data.frame(x = seq(50),
                                y = rnorm(50, 10, 3),
                                z = rnorm(50, 11, 2),
@@ -270,5 +282,43 @@ shinyServer(function(input, output, session){
   })
   output$grafico_provincia <- renderPlot({
     grafico_provincia
+  })
+  # tab modelos --------------------------------------------------------------------------
+  ##graficos del segundo tab
+  output$grafico_casos <- renderPlot({
+    grafico_casos
+  })
+  output$grafico_hospitalizados <- renderPlot({
+    grafico_hospitalizados
+  })
+  output$grafico_provincia <- renderPlot({
+    grafico_provincia
+  })
+  output$grafico_prediccion_red <- renderEcharts4r({
+    grafico_prediccion_red
+  })
+  output$grafico_prediccion_arima <- renderEcharts4r({
+    grafico_prediccion_arima
+  })
+  output$grafico_prediccion_naive  <- renderEcharts4r({
+    grafico_prediccion_naive 
+  })
+  output$tabla_red_compra <- renderText({
+    tabla_red_compra
+  })
+  output$tabla_red_venta <- renderText({
+    tabla_red_venta
+  })
+  output$tabla_arima_venta <- renderText({
+    tabla_arima_venta
+  })
+  output$tabla_arima_compra <- renderText({
+    tabla_arima_venta
+  })
+  output$tabla_naive_compra <- renderText({
+    tabla_naive_compra
+  })
+  output$tabla_naive_venta <- renderText({
+    tabla_naive_venta
   })
 })
