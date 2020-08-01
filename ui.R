@@ -163,7 +163,7 @@ shinyUI(
                             )
                     ),
                     tabItem("modelos",
-                            h3("Tipo cambio de compra y de venta del dólar de USA"),
+                            h3("Pronostico del tipo cambio de compra y de venta del dólar de USA"),
                             selectInput(inputId = "op_modelos",
                                         label = "Seleccione un modelo",
                                         choices = c("Red Neuronal Autorregresiva",
@@ -177,7 +177,9 @@ shinyUI(
                                 h4(strong("Metricas de desempeño para la variable Compra")),
                                 htmlOutput("tabla_red_compra"),
                                 h4(strong("Metricas de desempeño para la variable Venta")),
-                                htmlOutput("tabla_red_venta")
+                                htmlOutput("tabla_red_venta"),
+                                h4(strong("Prediccion para los proximos 6 meses")),
+                                htmlOutput("tabla_red_prediccion_final")
                               ),
                               conditionalPanel(
                                 condition = "input.op_modelos == 'ARIMA'",
@@ -185,7 +187,9 @@ shinyUI(
                                 h4(strong("Metricas de desempeño para la variable Compra")),
                                 htmlOutput("tabla_arima_compra"),
                                 h4(strong("Metricas de desempeño para la variable Venta")),
-                                htmlOutput("tabla_arima_venta")
+                                htmlOutput("tabla_arima_venta"),
+                                h4(strong("Prediccion para los proximos 6 meses")),
+                                htmlOutput("tabla_arima_prediccion_final")
                               ),
                               conditionalPanel(
                                 condition = "input.op_modelos == 'Naive'",

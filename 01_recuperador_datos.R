@@ -109,7 +109,7 @@ datos_tipocambio$fecha <- str_replace(datos_tipocambio$fecha,"Dic","Dec")
 datos_tipocambio$fecha <- str_replace(datos_tipocambio$fecha,"Ene","Jan")
 datos_tipocambio$fecha <- str_replace(datos_tipocambio$fecha,"Abr","Apr")
 datos_tipocambio$fecha <- dmy(datos_tipocambio$fecha)
-
+datos_tipocambio <- na.omit(datos_tipocambio)
 # Indicador Compra dolar del dia actual
 fin <- nrow(datos_tipocambio)
 
@@ -180,20 +180,26 @@ test_venta <- tail(datos_venta, n = 6)
 fit_red_compra <- nnetar(train_compra)
 prediccion_red_compra <- forecast(fit_red_compra, h = 6)
 
+fit_red_compra_final <- nnetar(datos_compra)
+prediccion_red_compra_final <- forecast(fit_red_compra, h = 6)
+
 fit_red_venta <- nnetar(train_venta)
 prediccion_red_venta <- forecast(fit_red_venta, h = 6)
+
+fit_red_venta_final <- nnetar(datos_venta)
+prediccion_red_venta_final <- forecast(fit_red_venta_final, h = 6)
 
 # almacenar info en data frame
 
 df_prediccion_red <- data.frame(compra = prediccion_red_compra$mean, venta = prediccion_red_venta$mean, 
-                                fecha = c("enero", "febrero", "marzo", "abril", "mayo", "junio"))
+                                fecha = c( "marzo", "abril", "mayo", "junio","julio","agosto"))
 
 grafico_prediccion_red<- df_prediccion_red%>%
   e_chart(fecha)%>%
   e_line(compra)%>%
   e_line(venta)%>%
   e_tooltip(trigger = "axis") %>%
-  e_y_axis(name = "Prediccion Precio de compra y venta", min = 510, nameGap = 40, nameLocation = "center")%>%
+  e_y_axis(name = "Prediccion Precio de compra y venta", min = 550, nameGap = 40, nameLocation = "center")%>%
   e_x_axis(name = "Mes de estudio", nameLocation = "center", nameGap = 40, margin = 0)%>%
   e_text_style(color = "black", fontsize = 12) %>%
   e_grid(right = 60, top = 90, width = "85%")%>%
@@ -210,6 +216,15 @@ tabla_red_venta <- kable(accuracy(prediccion_red_venta,test_venta)) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 saveRDS(tabla_red_venta, file = "inputs_app/tabla_red_venta.RDS")
 
+#tabla prediciones red
+tabla_red_pred <- data.frame(mes = c("septiembre","octubre","noviembre","diciembre","enero","febrero") ,
+                             Compra = prediccion_red_compra_final, 
+                             Venta =  prediccion_red_venta_final )
+colnames(tabla_red_pred) <- c("Mes","Compra","Venta")
+tabla_red_pred <- kable(tabla_red_pred) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
+saveRDS(tabla_red_pred, file = "inputs_app/tabla_red_prediccion_final.RDS")
+
 #ajuste arima
 
 fit_arima_compra <- auto.arima(train_compra, stepwise =FALSE)
@@ -218,16 +233,32 @@ prediccion_arima_compra <- forecast(fit_arima_compra, h = 6)
 fit_arima_venta <- auto.arima(train_venta, stepwise =FALSE)
 prediccion_arima_venta <- forecast(fit_arima_venta, h = 6) 
 
+fit_arima_compra_final <- auto.arima(datos_compra, stepwise = TRUE)
+prediccion_arima_compra_final <- forecast(fit_arima_compra, h = 6)
+
+fit_arima_venta_final <- auto.arima(datos_venta, stepwise =FALSE)
+prediccion_arima_venta_final <- forecast(fit_arima_venta_final, h = 6) 
+
+#tabla prediciones arima
+tabla_arima_pred <- data.frame(mes = c("septiembre","octubre","noviembre","diciembre","enero","febrero") ,
+                             Compra = prediccion_arima_compra_final$mean, 
+                             Venta =  prediccion_arima_venta_final$mean )
+
+tabla_arima_pred <- kable(tabla_arima_pred) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
+
+saveRDS(tabla_arima_pred, file = "inputs_app/tabla_arima_prediccion_final.RDS")
+
 # almacenar info en data frame
 df_prediccion_arima <- data.frame(compra = prediccion_arima_compra$mean, venta = prediccion_arima_venta$mean, 
-                                  fecha = c("enero", "febrero", "marzo", "abril", "mayo", "junio"))
+                                  fecha = c( "marzo", "abril", "mayo", "junio","julio","agosto"))
 # graficar
 grafico_prediccion_arima <- df_prediccion_arima%>%
   e_chart(fecha)%>%
   e_line(compra)%>%
   e_line(venta)%>%
   e_tooltip(trigger = "axis") %>%
-  e_y_axis(name = "Predicción Precio de compra y venta", min = 510, nameGap = 40, nameLocation = "center")%>%
+  e_y_axis(name = "Predicción Precio de compra y venta", min = 550, nameGap = 40, nameLocation = "center")%>%
   e_x_axis(name = "Mes de estudio", nameLocation = "center", nameGap = 40, margin = 0)%>%
   e_text_style(color = "black", fontsize = 12) %>%
   e_grid(right = 60, top = 90, width = "85%")%>%
@@ -250,7 +281,7 @@ prediccion_naive_venta <- naive(train_venta, h = 6)
 
 # almacenar info en data frame
 df_prediccion_naive <- data.frame(compra= prediccion_naive_compra$mean, venta = prediccion_naive_venta$mean, 
-                                  fecha = c("enero", "febrero", "marzo", "abril", "mayo", "junio"))
+                                  fecha = c( "marzo", "abril", "mayo", "junio","julio","agosto"))
 
 # graficar
 grafico_prediccion_naive <- df_prediccion_naive%>%
@@ -258,7 +289,7 @@ grafico_prediccion_naive <- df_prediccion_naive%>%
   e_line(compra)%>%
   e_line(venta)%>%
   e_tooltip(trigger = "axis") %>%
-  e_y_axis(name = "Prediccion Precio de compra y venta", min = 510, nameGap = 40, nameLocation = "center")%>%
+  e_y_axis(name = "Prediccion Precio de compra y venta", min = 550, nameGap = 40, nameLocation = "center")%>%
   e_x_axis(name = "Mes de estudio", nameLocation = "center", nameGap = 40, margin = 0)%>%
   e_text_style(color = "black", fontsize = 12) %>%
   e_grid(right = 60, top = 90, width = "85%")%>%

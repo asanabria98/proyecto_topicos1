@@ -15,6 +15,8 @@ tabla_arima_compra <- readRDS("inputs_app/tabla_arima_compra.RDS")
 grafico_prediccion_naive <- readRDS("inputs_app/grafico_prediccion_naive.RDS")
 tabla_naive_compra <- readRDS("inputs_app/tabla_naive_compra.RDS")
 tabla_naive_venta <- readRDS("inputs_app/tabla_naive_venta.RDS")
+tabla_red_prediccion_final <- readRDS("inputs_app/tabla_red_prediccion_final.RDS")
+tabla_arima_prediccion_final <- readRDS("inputs_app/tabla_arima_prediccion_final.RDS")
 
 # Datos COVID
 graf_covid_diario <- readRDS("inputs_app/graf_covid_diario.RDS")
@@ -303,5 +305,11 @@ shinyServer(function(input, output, session){
   })
   output$tabla_naive_venta <- renderText({
     tabla_naive_venta
+  })
+  output$tabla_red_prediccion_final <- renderText({
+    tabla_red_prediccion_final
+  })
+  output$tabla_arima_prediccion_final <- renderText({
+    tabla_arima_prediccion_final
   })
 })
