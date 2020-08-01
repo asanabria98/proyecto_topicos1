@@ -5,64 +5,37 @@ library(tidyverse)
 library(plotly)
 library(echarts4r)
 
-historico_dolar <- readRDS("historico_dolar.RDS")
-#grafico_casos <- readRDS("grafico_casos.RDS")
-#grafico_hospitalizados <- readRDS("grafico_hospitalizados.RDS")
-#grafico_provincia <- readRDS("grafico_provincia.RDS")
-grafico_prediccion_red <- readRDS("grafico_prediccion_red.RDS")
-tabla_red_compra <- readRDS("tabla_red_compra.RDS")
-tabla_red_venta <- readRDS("tabla_red_venta.RDS")
-grafico_prediccion_arima <- readRDS("grafico_prediccion_arima.RDS")
-tabla_arima_venta <- readRDS("tabla_arima_venta.RDS")
-tabla_arima_compra <- readRDS("tabla_arima_compra.RDS")
-grafico_prediccion_naive <- readRDS("grafico_prediccion_naive.RDS")
-tabla_naive_compra <- readRDS("tabla_naive_compra.RDS")
-tabla_naive_venta <- readRDS("tabla_naive_venta.RDS")
+# Modelos
+grafico_prediccion_red <- readRDS("inputs_app/grafico_prediccion_red.RDS")
+tabla_red_compra <- readRDS("inputs_app/tabla_red_compra.RDS")
+tabla_red_venta <- readRDS("inputs_app/tabla_red_venta.RDS")
+grafico_prediccion_arima <- readRDS("inputs_app/grafico_prediccion_arima.RDS")
+tabla_arima_venta <- readRDS("inputs_app/tabla_arima_venta.RDS")
+tabla_arima_compra <- readRDS("inputs_app/tabla_arima_compra.RDS")
+grafico_prediccion_naive <- readRDS("inputs_app/grafico_prediccion_naive.RDS")
+tabla_naive_compra <- readRDS("inputs_app/tabla_naive_compra.RDS")
+tabla_naive_venta <- readRDS("inputs_app/tabla_naive_venta.RDS")
 
-datos_economicos <- data.frame(x = seq(50),
-                               y = rnorm(50, 10, 3),
-                               z = rnorm(50, 11, 2),
-                               w = rnorm(50, 9, 2),
-                               u = rnorm(50, 9, 1),
-                               v = rnorm(50, 12, 4))
-graf_var_ventadolar <- datos_economicos %>% 
-  e_charts(x) %>% 
-  e_line(y) %>% 
-  e_theme("infographic") %>% 
-  e_datazoom() %>% 
-  e_legend(right = "50")
+# Datos COVID
+graf_covid_diario <- readRDS("inputs_app/graf_covid_diario.RDS")
+graf_covid_acum <- readRDS("inputs_app/graf_covid_acum.RDS")
+datos_covid_hoy <- readRDS("inputs_app/datos_covid_hoy.RDS")
 
-graf_var_compradolar <- datos_economicos %>% 
-  e_charts(x) %>% 
-  e_line(z) %>% 
-  e_theme("infographic") %>% 
-  e_datazoom() %>% 
-  e_legend(right = "50")
+# Datos tipo de cambio
+graf_var_ventadolar <- readRDS("inputs_app/graf_var_ventadolar.RDS")
+graf_var_compradolar <- readRDS("inputs_app/graf_var_compradolar.RDS")
+dato_venta_y_compra <- readRDS("inputs_app/dato_venta_y_compra.RDS")
 
-graf_var_inflacion <- datos_economicos %>% 
-  e_charts(x) %>% 
-  e_line(w) %>% 
-  e_theme("infographic") %>% 
-  e_datazoom() %>% 
-  e_legend(right = "50")
+# Datos exportaciones
+datos_exp <- readRDS("inputs_app/exporta.RDS")
 
-graf_var_import <- datos_economicos %>% 
-  e_charts(x) %>% 
-  e_line(u) %>% 
-  e_theme("infographic") %>% 
-  e_datazoom() %>% 
-  e_legend(right = "50")
+# Datos importaciones
+datos_imp <- readRDS("inputs_app/importa.RDS")
 
-graf_var_export <- datos_economicos %>% 
-  e_charts(x) %>% 
-  e_line(v) %>% 
-  e_theme("infographic") %>% 
-  e_datazoom() %>% 
-  e_legend(right = "50")
+# Datos inflacion
+graf_var_inflacion <- readRDS("inputs_app/graf_inflacion.RDS")
+datos_inflacion <- readRDS("inputs_app/datos_inflacion.RDS")
 
-graf_covid_diario <- readRDS("graf_covid_diario.RDS")
-
-graf_covid_acum <- readRDS("graf_covid_acum.RDS")
 
 
 #server
@@ -72,14 +45,17 @@ shinyServer(function(input, output, session){
   # Value boxes Indicadores Venta dolar --------------------------------------------------------------------------
   
   output$precio_venta <- renderValueBox({
-    valueBox(value = 10, 
+    valueBox(value = dato_venta_y_compra[2, 2], 
              subtitle = "Precio en colones", 
              icon = icon("dollar-sign"),
              color = "teal")
   })
   
   output$cambio_venta <- renderValueBox({
-    valueBox(value = 10, 
+    hoy <- dato_venta_y_compra[2, 2]
+    ayer <- dato_venta_y_compra[1, 2]
+    
+    valueBox(value = ((hoy - ayer)/ayer)*100, 
              subtitle = "Tasa de cambio %", 
              icon = icon("arrows-alt-v"),
              color = "teal")
@@ -88,14 +64,17 @@ shinyServer(function(input, output, session){
   # Value boxes Indicadores Compra dolar --------------------------------------------------------------------------
   
   output$precio_compra <- renderValueBox({
-    valueBox(value = 10, 
+    valueBox(value = dato_venta_y_compra[2, 1], 
              subtitle = "Precio en colones", 
-             icon = icon("arrows-alt-v"),
+             icon = icon("dollar-sign"),
              color = "teal")
   })
   
   output$cambio_compra <- renderValueBox({
-    valueBox(value = 10, 
+    hoy <- dato_venta_y_compra[2, 1]
+    ayer <- dato_venta_y_compra[1, 1]
+    
+    valueBox(value = ((hoy - ayer)/ayer)*100, 
              subtitle = "Tasa de cambio %", 
              icon = icon("arrows-alt-v"),
              color = "teal")
@@ -104,14 +83,19 @@ shinyServer(function(input, output, session){
   # Value boxes Indicadores Inflacion --------------------------------------------------------------------------
   
   output$valor_inflacion <- renderValueBox({
-    valueBox(value = 10, 
+    
+    valueBox(value = round(as.numeric(datos_inflacion[2, 2]), 4), 
              subtitle = "Inflacion % anual", 
-             icon = icon("arrows-alt-v"),
+             icon = icon("dollar-sign"),
              color = "teal")
   })
   
   output$cambio_inflacion <- renderValueBox({
-    valueBox(value = 10, 
+    
+    pasado <- datos_inflacion[1, 2]
+    presente <- datos_inflacion[2, 2]
+    
+    valueBox(value = round((presente - pasado)/pasado, 3)*100, 
              subtitle = "Tasa de cambio %", 
              icon = icon("arrows-alt-v"),
              color = "teal")
@@ -122,7 +106,7 @@ shinyServer(function(input, output, session){
   output$valor_importaciones <- renderValueBox({
     valueBox(value = 10, 
              subtitle = "Importaciones en millones de $", 
-             icon = icon("arrows-alt-v"),
+             icon = icon("dollar-sign"),
              color = "teal")
   })
   
@@ -138,7 +122,7 @@ shinyServer(function(input, output, session){
   output$valor_exportaciones <- renderValueBox({
     valueBox(value = 10, 
              subtitle = "Exportaciones en millones de $", 
-             icon = icon("arrows-alt-v"),
+             icon = icon("dollar-sign"),
              color = "teal")
   })
   
@@ -149,19 +133,25 @@ shinyServer(function(input, output, session){
              color = "teal")
   })
   
+  output$nota_datos <- renderText({
+    
+    as.character(input$prod)
+    
+  })
+  
   # Tab Resumen: columna datos COVID --------------------------------------------------------------------------
   
   # Value boxes Casos nuevos --------------------------------------------------------------------------
   
   output$casos_nuevos <- renderValueBox({
-    valueBox(value = 10, 
+    valueBox(value = datos_covid_hoy[1,1], 
              subtitle = "Casos nuevos", 
-             icon = icon("arrows-alt-v"),
+             icon = icon("user-plus"),
              color = "maroon")
   })
   
   output$cambio_nuevos <- renderValueBox({
-    valueBox(value = 10, 
+    valueBox(value = datos_covid_hoy[1,2], 
              subtitle = "Tasa de cambio % casos nuevos", 
              icon = icon("arrows-alt-v"),
              color = "maroon")
@@ -170,27 +160,27 @@ shinyServer(function(input, output, session){
   # Value box Hospitalizados --------------------------------------------------------------------------
   
   output$valor_hospitalizados <- renderValueBox({
-    valueBox(value = 10, 
+    valueBox(value = datos_covid_hoy[1,3], 
              subtitle = "Pacientes hospitalizados", 
-             icon = icon("arrows-alt-v"),
+             icon = icon("procedures"),
              color = "maroon")
   })
   
   # Value box UCI --------------------------------------------------------------------------
   
   output$valor_uci <- renderValueBox({
-    valueBox(value = 10, 
+    valueBox(value = datos_covid_hoy[1,4], 
              subtitle = "Pacientes en UCI", 
-             icon = icon("arrows-alt-v"),
+             icon = icon("exclamation"),
              color = "maroon")
   })
   
   # Value box Recuperados --------------------------------------------------------------------------
   
   output$valor_recuperados <- renderValueBox({
-    valueBox(value = 10, 
+    valueBox(value = datos_covid_hoy[1,5], 
              subtitle = "Personas recuperadas", 
-             icon = icon("arrows-alt-v"),
+             icon = icon("user-check"),
              color = "maroon")
   })
   
@@ -223,10 +213,36 @@ shinyServer(function(input, output, session){
     } else if (input$variables == "Inflación"){
       graf_var_inflacion
     } else if (input$variables == "Importaciones"){
-      graf_var_import
+      
+      # Generacion directa de grafico de exportaciones
+      datos_imp %>% filter(Producto == input$prod) %>%
+        e_charts(Fecha) %>%
+        e_line(Monto) %>%
+        e_title(text = NULL, subtext = "Millones USD") %>% 
+        e_legend(right = "50") %>% 
+        e_tooltip(trigger = "axis")  %>% 
+        e_mark_point("Monto", data = list(type = "max")) %>% 
+        e_datazoom()
+      
     } else if (input$variables == "Exportaciones"){
-      graf_var_export
+      
+      # Generacion directa de grafico de exportaciones
+      datos_exp %>% filter(Producto == input$prod) %>%
+        e_charts(Fecha) %>%
+        e_line(Monto) %>%
+        e_title(text = NULL, subtext = "Millones USD") %>% 
+        e_legend(right = "50") %>% 
+        e_tooltip(trigger = "axis")  %>% 
+        e_mark_point("Monto", data = list(type = "max")) %>% 
+        e_datazoom()
+      
     }
+    
+  })
+  
+  output$nota_graficos <- renderText({
+    
+    as.character(input$prod)
     
   })
   
@@ -249,40 +265,7 @@ shinyServer(function(input, output, session){
     } 
     
   })
-  
-  
-  
-  
-  # App anterior --------------------------------------------------------------------------
-  output$compra_dolar <- renderValueBox({
-    valueBox(datos[nrow(datos),2],
-             tags$p("Tipo de cambio compra",
-                    style = "font-size: 100%"),
-             color = "olive",
-             icon = icon("clock")
-    )
-  })
-  output$venta_dolar <- renderValueBox({
-    valueBox(datos[nrow(datos),3],
-             tags$p("Tipo de cambio venta",
-                    style = "font-size: 100%"),
-             color = "navy",
-             icon = icon("clock")
-    )
-  })
-  output$historico_dolar <- renderEcharts4r({
-    historico_dolar
-  })
-##graficos del segundo tab
-  output$grafico_casos <- renderPlot({
-    grafico_casos
-  })
-  output$grafico_hospitalizados <- renderPlot({
-    grafico_hospitalizados
-  })
-  output$grafico_provincia <- renderPlot({
-    grafico_provincia
-  })
+
   # tab modelos --------------------------------------------------------------------------
   ##graficos del segundo tab
   output$grafico_casos <- renderPlot({
