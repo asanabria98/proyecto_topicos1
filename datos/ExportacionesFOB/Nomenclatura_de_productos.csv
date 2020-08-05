@@ -1,0 +1,188 @@
+Codigo, Descripcion de productos
+NP001, Frijol
+NP002, Maiz
+NP003, Trigo
+NP004, Otros cereales
+NP005, Legumbres y otras semillas oleaginosas
+NP006, Arroz
+NP007, Sandia
+NP008, Melon
+NP009, Cebolla
+NP010, Chayote
+NP011, Papa
+NP012, Raices y tuberculos n.c.p.
+NP013, Hortalizas n.c.p.
+NP014, Caña de azucar
+NP015, Flores
+NP016, Follajes
+NP017, Banano
+NP018, Platano
+NP019, Piña
+NP020, Palma aceitera
+NP021, Cafe en fruta
+NP022, Mango
+NP023, Naranja
+NP024, Palmito
+NP025, Otros productos de plantas no perennes y perennes n.c.p.
+NP026, Otras frutas, nueces y otros frutos oleaginosos
+NP027, Plantas y raices vivas
+NP028, Ganado bovino
+NP029, Ganado porcino
+NP030, Pollo en pie
+NP031, Otros animales vivos
+NP032, Huevos
+NP033, Leche cruda
+NP034, Otros productos animales n.c.p.
+NP035, Servicios de apoyo a la agricultura, la ganaderia y actividades postcosecha
+NP036, Productos de la silvicultura, de la extraccion de la madera y de la caza
+NP037, Productos de la pesca
+NP038, Productos de la acuicultura
+NP039, Piedra, arena y arcilla
+NP040, Sal
+NP041, Petroleo y gas natural
+NP042, Otros minerales metalicos, no metalicos y servicios de apoyo 
+NP043, Carne y despojos comestibles de aves
+NP044, Carne y despojos comestibles de ganado vacuno
+NP045, Carne y despojos comestibles de ganado porcino
+NP046, Embutidos y otros productos carnicos
+NP047, Pescados, crustaceos y moluscos conservados
+NP048, Frutas, legumbres y hortalizas en conserva
+NP049, Aceites vegetales crudos y refinados
+NP050, Otros aceites y grasas de origen vegetal y animal n.c.p.
+NP051, Productos lacteos
+NP052, Arroz descascarillado, elaborado y semielaborado 
+NP053, Harina de Trigo
+NP054, Otros productos de molineria n.c.p., almidones y sus derivados
+NP055, Productos de panaderia
+NP056, Azucar de caña, melazas, jarabes y otros azucares
+NP057, Cacao, chocolates y productos de confiteria
+NP058, Macarrones, fideos y productos farinaceos analogos
+NP059, Cafe oro
+NP060, Cafe molido, soluble, extractos y concentrados
+NP061, Comidas, platos preparados y otros productos alimenticios
+NP062, Alimentos preparados para animales
+NP063, Bebidas alcoholicas destiladas y vinos
+NP064, Cerveza, malta, bebidas no alcoholicas y agua embotellada
+NP065, Productos de tabaco
+NP066, Articulos textiles, excepto prendas de vestir
+NP067, Prendas de vestir
+NP068, Cuero y productos conexos, excepto calzado
+NP069, Calzado
+NP070, Madera y corcho, productos de madera y corcho, excepto muebles; articulos de paja y materiales trenzables
+NP071, Papel y productos de papel
+NP072, Productos de la edicion, impresion y grabaciones excepto de programas informaticos
+NP073, Gasolina
+NP074, Diesel
+NP075, Bunker
+NP076, Aceites y grasas lubricantes
+NP077, Otros productos derivados del petroleo y de coque
+NP078, Sustancias quimicas basicas y abonos y compuestos de nitrogeno
+NP079, Plasticos y caucho sintetico en formas primarias
+NP080, Pesticidas y otros productos quimicos de uso agropecuario
+NP081, Pinturas, barnices, revestimientos, tintas de imprenta y masillas
+NP082, Jabones, detergentes, perfumes y preparados de tocador
+NP083, Fibras artificiales y productos quimicos n.c.p
+NP084, Productos farmaceuticos y medicinales
+NP085, Productos de caucho
+NP086, Perfiles, tuberia y conexiones de plastico rigido sin soporte
+NP087, Otros productos de plastico
+NP088, Vidrio y productos de vidrio
+NP089, Productos refractarios, materiales de construccion de arcilla y otros productos de porcelana y ceramica
+NP090, Cemento, cal y yeso
+NP091, Articulos de hormigon, cemento y yeso y otros productos minerales no metalicos n.c.p. 
+NP092, Productos Basicos de Hierro y Acero 
+NP093, Productos primarios de aluminio, zinc, oro, plata y otros semiacabados por un proceso de fundicion
+NP094, Productos metalicos para uso estructural, tanques, depositos, recipientes de metal y generadores de vapor
+NP095, Otros productos de metal
+NP096, Componentes y tableros electronicos, computadoras y equipo periferico
+NP097, Equipos de comunicaciones y aparatos electronicos de consumo
+NP098, Equipo de medicion, prueba, navegacion y control y de relojes
+NP099, Equipo de irradiacion, electronico, medico y terapeutico
+NP100, Instrumentos opticos, fotografico, soportes magneticos y opticos
+NP101, Motores, generadores, transformadores electricos, aparatos de distribucion y control de la energia electrica
+NP102, Pilas, baterias, acumuladores, cables y dispositivos de cableado
+NP103, Equipo electrico de iluminacion
+NP104, Refrigeradoras, cocinas, lavadoras y otros aparatos de uso domestico
+NP105, Otros tipos de equipo electrico
+NP106, Maquinaria de uso general y especial, partes y piezas
+NP107, Vehiculos automotores, carrocerias, remolques y semirremolques
+NP108, Partes y piezas para vehiculos automotores
+NP109, Otros tipos de equipo de transporte
+NP110, Muebles de madera
+NP111, Muebles de otro tipo de material, excepto de piedra, hormigon y ceramica
+NP112, Instrumentos y suministros medicos y dentales
+NP113, Otros productos manufactureros
+NP114, Desperdicios y desechos
+NP115, Servicios de reparacion e instalacion de maquinaria y equipo
+NP116, Servicios de manufactura
+NP117, Energia electrica, gas, vapor y aire acondicionado
+NP118, Agua potable y alcantarillado
+NP119, Servicios de recogida, tratamiento y eliminacion de desechos
+NP120, Servicios de proteccion del medio ambiente
+NP121, Edificaciones residenciales
+NP122, Edificaciones no residenciales
+NP123, Carreteras y vias ferreas
+NP124, Construccion de proyectos de servicio publico y otras obras de ingenieria civil
+NP125, Servicios especializados de la construccion
+NP126, Servicios de Comercio
+NP127, Mantenimiento y reparacion de vehiculos automotores
+NP128, Servicios de transporte por ferrocarril
+NP129, Servicios de transporte terrestre de pasajeros excepto taxis
+NP130, Servicio de taxis
+NP131, Transporte de carga
+NP132, Transporte de pasajeros por via maritima y aerea
+NP133, Servicios de almacenamiento y deposito
+NP134, Servicios de estacionamientos
+NP135, Otros servicios vinculados con transporte
+NP136, Carga y descarga
+NP137, Otros servicios de apoyo al transporte
+NP138, Servicios postales y de mensajeria
+NP139, Servicios de alojamiento
+NP140, Servicio de suministro de comida y bebidas
+NP141, Servicios de radio, de television, peliculas, videos y otros afines
+NP142, Servicios de telefonia
+NP143, Servicios de internet
+NP144, Otros servicios de telecomunicaciones
+NP145, Servicios de informacion, programacion y consultoria informatica, edicion de programas informaticos y afines
+NP146, Servicios de banca central
+NP147, Otros servicios explicitos de intermediacion monetaria 
+NP148, Servicios de intermediacion financiera medidos indirectamente (SIFMI)
+NP149, Otros servicios financieros y de banca de inversion
+NP150, Servicios de seguros, reaseguros y fondos de pensiones
+NP151, Servicios auxiliares de la intermediacion monetaria y financiera
+NP152, Servicios auxiliares de seguros y fondos de pensiones
+NP153, Servicios de alquiler de viviendas
+NP154, Servicios de alquiler de inmuebles no residenciales y otros servicios inmobiliarios
+NP155, Servicios juridicos
+NP156, Servicios de contabilidad, consultoria fiscal y otros
+NP157, Servicios de consultoria en gestion financiera, recursos humanos, mercadeo, oficinas principales y afines
+NP158, Servicios de arquitectura, ingenieria y conexos
+NP159, Servicios de investigacion cientifica y desarrollo
+NP160, Servicios de publicidad, provision de espacios de publicidad y estudios de mercado
+NP161, Otros servicios profesionales, cientificos y tecnicos
+NP162, Servicios veterinarios
+NP163, Servicios de alquiler de automotores, maquinaria y equipo
+NP164, Alquiler y arrendamiento de licencias, derechos de autor, patentes y franquicias
+NP165, Otros servicios de alquiler
+NP166, Servicios de agencias de empleo
+NP167, Servicios de agencias de viajes, operadores turisticos, servicios de reservas y actividades conexas
+NP168, Servicios de seguridad  e investigacion
+NP169, Limpieza de edificios y cuidado del paisaje y mantenimiento
+NP170, Servicios administrativos y de apoyo de oficina y otras actividades de apoyo a las empresas
+NP171, Servicios publicos generales del gobierno 
+NP172, Servicios a la comunidad en general
+NP173, Servicios administrativos de los regimenes de seguridad social obligatoria
+NP174, Servicios de enseñanza
+NP175, Servicios de atencion de la salud humana y de asistencia social
+NP176, Servicios artisticos, de entretenimiento y recreativos
+NP177, Servicios de asociaciones empresariales, profesionales, sindicatos, politicas y afines
+NP178, Servicios de reparacion de computadoras, efectos personales y enseres domesticos
+NP179, Servicios de lavado, secado y limpieza de prendas
+NP180, Servicios de peluqueria y otros tratamientos de belleza
+NP181, Servicios funerarios y conexos
+NP182, Otros servicios n.c.p.
+NP183, Servicios domesticos
+NP184, Compras directas en el exterior por residentes (embajadas) 
+NP185, Compras directas en el exterior por residentes (viajes) 
+NP186, Compras directas en el territorio nacional por no residentes (embajadas) 
+NP187, Compras directas en el territorio nacional por no residentes (viajes) 

@@ -33,19 +33,29 @@ shinyUI(
                                                     "Exportaciones"
                                         ),
                                         width = 1000),
-                            conditionalPanel(
-                              condition = "(input.variables == 'Importaciones' || input.variables == 'Exportaciones')",
-                              selectInput(inputId = "prod", 
-                                          label = "Elija el producto de importación a visualizar:", 
-                                          choices = paste0("NP", 
-                                                           c(paste0("00",
-                                                                    seq(1,9)),
-                                                             paste0("0",
-                                                                    seq(10,99)), 
-                                                             paste0("",seq(100,118))) 
-                                          ) , 
-                                          selected = "NP005",
-                                          width = '50%')),
+                            fluidRow(
+                              
+                                conditionalPanel(
+                                  condition = "(input.variables == 'Importaciones' || input.variables == 'Exportaciones')",
+                                  column(
+                                    width = 6,
+                                    selectInput(inputId = "prod", 
+                                                label = "Elija el producto de importación a visualizar:", 
+                                                choices = paste0("NP", 
+                                                                 c(paste0("00",
+                                                                          seq(1,9)),
+                                                                   paste0("0",
+                                                                          seq(10,99)), 
+                                                                   paste0("",seq(100,118))) 
+                                                ) , 
+                                                selected = "NP005",
+                                                width = NULL)),
+                                  column(
+                                    width = 6,
+                                    downloadButton("Clasificacion", "Descargar clasificación de productos")
+                                  ) 
+                              )
+                            ),
                             fluidRow(
                               # columna Variables economicas --------------------------------------------------------------------------
                               
@@ -63,7 +73,8 @@ shinyUI(
                                       condition = "input.variables == 'Tipo de cambio: Venta $'",
                                       h4("Tipo de cambio: Venta del $"),
                                       valueBoxOutput("precio_venta", width = NULL),
-                                      valueBoxOutput("cambio_venta", width = NULL)
+                                      valueBoxOutput("cambio_venta", width = NULL),
+                                      h5("* Datos actualizados al día: ", textOutput(outputId = "fechaVenta"))
                                     ),
                                     
                                     # Indicadores Compra dolar --------------------------------------------------------------------------
@@ -72,7 +83,8 @@ shinyUI(
                                       condition = "input.variables == 'Tipo de cambio: Compra $'",
                                       h4("Tipo de cambio: Compra $"),
                                       valueBoxOutput("precio_compra", width = NULL),
-                                      valueBoxOutput("cambio_compra", width = NULL)
+                                      valueBoxOutput("cambio_compra", width = NULL),
+                                      h5("* Datos actualizados al día: ", textOutput(outputId = "fechaCompra"))
                                     ),
                                     
                                     # Indicadores Inflacion --------------------------------------------------------------------------
@@ -81,7 +93,8 @@ shinyUI(
                                       condition = "input.variables == 'Inflación'",
                                       h4("Inflación comercial"), 
                                       valueBoxOutput("valor_inflacion", width = NULL),
-                                      valueBoxOutput("cambio_inflacion", width = NULL)
+                                      valueBoxOutput("cambio_inflacion", width = NULL),
+                                      h5("* Datos actualizados al día: ", textOutput(outputId = "fechaInflacion"))
                                     ),
                                     
                                     # Indicadores Importaciones --------------------------------------------------------------------------
@@ -90,7 +103,8 @@ shinyUI(
                                       condition = "input.variables == 'Importaciones'",
                                       h4("Importaciones (CIF)"),
                                       valueBoxOutput("valor_importaciones", width = NULL),
-                                      valueBoxOutput("cambio_importaciones", width = NULL)
+                                      valueBoxOutput("cambio_importaciones", width = NULL),
+                                      h5("* Datos actualizados al día: ", textOutput(outputId = "fechaImp"))
                                     ),
                                     
                                     # Indicadores Exportaciones --------------------------------------------------------------------------
@@ -99,12 +113,13 @@ shinyUI(
                                       condition = "input.variables == 'Exportaciones'",
                                       h4("Exportaciones (FOB)"),
                                       valueBoxOutput("valor_exportaciones", width = NULL),
-                                      valueBoxOutput("cambio_exportaciones", width = NULL)
+                                      valueBoxOutput("cambio_exportaciones", width = NULL),
+                                      h5("* Datos actualizados al día: ", textOutput(outputId = "fechaExp"))
                                     ),
                                     
                                     conditionalPanel(
                                       condition = "(input.variables == 'Importaciones' || input.variables == 'Exportaciones')",
-                                      h5("Datos del producto con codigo ", textOutput(outputId = "nota_datos"))
+                                      h5("* Datos del producto con codigo ", textOutput(outputId = "nota_product"))
                                     )
                                 ),
                               ),
@@ -117,13 +132,14 @@ shinyUI(
                                     collapsible = TRUE,
                                     width = NULL,
                                     status = "primary",
-                                    h4("Información al dia de hoy"), 
+                                    h4("Principales indicadores"), 
                                     h5(""),
                                     valueBoxOutput("casos_nuevos", width = NULL),
                                     valueBoxOutput("cambio_nuevos", width = NULL),
                                     valueBoxOutput("valor_hospitalizados", width = NULL),
                                     valueBoxOutput("valor_uci", width = NULL),
-                                    valueBoxOutput("valor_recuperados", width = NULL)
+                                    valueBoxOutput("valor_recuperados", width = NULL),
+                                    h5("* Datos actualizados al día: ", textOutput(outputId = "fechaCOVID"))
                                 )
                               )
                             ),
