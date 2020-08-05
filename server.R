@@ -4,6 +4,7 @@ library(shinydashboard)
 library(tidyverse)
 library(plotly)
 library(echarts4r)
+library(lubridate)
 
 # Modelos
 grafico_prediccion_red <- readRDS("inputs_app/grafico_prediccion_red.RDS")
@@ -33,6 +34,7 @@ datos_exp <- readRDS("inputs_app/exporta.RDS")
 
 # Datos importaciones
 datos_imp <- readRDS("inputs_app/importa.RDS")
+clasificacion <- read.csv(file = "datos/ExportacionesFOB/Nomenclatura_de_productos.csv", header = TRUE, sep = ",")
 
 # Datos inflacion
 graf_var_inflacion <- readRDS("inputs_app/graf_inflacion.RDS")
@@ -47,39 +49,55 @@ shinyServer(function(input, output, session){
   # Value boxes Indicadores Venta dolar --------------------------------------------------------------------------
   
   output$precio_venta <- renderValueBox({
-    valueBox(value = dato_venta_y_compra[2, 2], 
+    valueBox(value = dato_venta_y_compra[2, 3], 
              subtitle = "Precio en colones", 
              icon = icon("dollar-sign"),
              color = "teal")
   })
   
   output$cambio_venta <- renderValueBox({
-    hoy <- dato_venta_y_compra[2, 2]
-    ayer <- dato_venta_y_compra[1, 2]
     
-    valueBox(value = ((hoy - ayer)/ayer)*100, 
+    dato <- round(as.numeric(dato_venta_y_compra[2, 5]), 1)
+    
+    valueBox(value = dato, 
              subtitle = "Tasa de cambio %", 
-             icon = icon("arrows-alt-v"),
+             icon = icon(ifelse(dato > 0, "arrow-up", ifelse(dato < 0, "arrow-down", "arrows-alt-v"))),
              color = "teal")
+  })
+  
+  output$fechaVenta <- renderText({
+    
+    datos <- dato_venta_y_compra %>% 
+      tail(1)
+    
+    as.character(as.Date(as.numeric(datos[1,1]), origin = "1970-01-01"))
   })
   
   # Value boxes Indicadores Compra dolar --------------------------------------------------------------------------
   
   output$precio_compra <- renderValueBox({
-    valueBox(value = dato_venta_y_compra[2, 1], 
+    valueBox(value = dato_venta_y_compra[2, 2], 
              subtitle = "Precio en colones", 
              icon = icon("dollar-sign"),
              color = "teal")
   })
   
   output$cambio_compra <- renderValueBox({
-    hoy <- dato_venta_y_compra[2, 1]
-    ayer <- dato_venta_y_compra[1, 1]
     
-    valueBox(value = ((hoy - ayer)/ayer)*100, 
+    dato <- round(as.numeric(dato_venta_y_compra[2, 4]), 1)
+    
+    valueBox(value = dato, 
              subtitle = "Tasa de cambio %", 
-             icon = icon("arrows-alt-v"),
+             icon = icon(ifelse(dato > 0, "arrow-up", ifelse(dato < 0, "arrow-down", "arrows-alt-v"))),
              color = "teal")
+  })
+  
+  output$fechaCompra <- renderText({
+    
+    datos <- dato_venta_y_compra %>% 
+      tail(1)
+    
+    as.character(as.Date(as.numeric(datos[1,1]), origin = "1970-01-01"))
   })
   
   # Value boxes Indicadores Inflacion --------------------------------------------------------------------------
@@ -94,68 +112,132 @@ shinyServer(function(input, output, session){
   
   output$cambio_inflacion <- renderValueBox({
     
-    pasado <- datos_inflacion[1, 2]
-    presente <- datos_inflacion[2, 2]
+    dato <- round(as.numeric(datos_inflacion[2, 3]), 1)
     
-    valueBox(value = round((presente - pasado)/pasado, 3)*100, 
+    valueBox(value = dato, 
              subtitle = "Tasa de cambio %", 
-             icon = icon("arrows-alt-v"),
+             icon = icon(ifelse(dato > 0, "arrow-up", ifelse(dato < 0, "arrow-down", "arrows-alt-v"))),
              color = "teal")
+  })
+  
+  output$fechaInflacion <- renderText({
+    
+    datos <- datos_inflacion %>% 
+      tail(1)
+    
+    as.character(as.Date(as.numeric(datos[1,1]), origin = "1970-01-01"))
   })
   
   # Value boxes Indicadores Importaciones --------------------------------------------------------------------------
   
   output$valor_importaciones <- renderValueBox({
-    valueBox(value = 10, 
+    
+    datos <- datos_imp %>% 
+      filter(Producto == input$prod) %>% 
+      tail(1)
+    
+    valueBox(value = round(as.numeric(datos[1, 3]), 4), 
              subtitle = "Importaciones en millones de $", 
              icon = icon("dollar-sign"),
              color = "teal")
   })
   
   output$cambio_importaciones <- renderValueBox({
-    valueBox(value = 10, 
+    
+    datos <- datos_imp %>% 
+      filter(Producto == input$prod) %>% 
+      tail(2) %>% 
+      mutate(cambio = (Monto - lag(Monto))*100/lag(Monto))
+    
+    dato <- round(as.numeric(datos[2, 4]), 1)
+    
+    valueBox(value = dato, 
              subtitle = "Tasa de cambio %", 
-             icon = icon("arrows-alt-v"),
+             icon = icon(ifelse(dato > 0, "arrow-up", ifelse(dato < 0, "arrow-down", "arrows-alt-v"))),
              color = "teal")
+  })
+  
+  output$fechaImp <- renderText({
+    
+    datos <- datos_imp %>% 
+      filter(Producto == input$prod) %>% 
+      tail(1)
+    
+    as.character(as.Date(as.numeric(datos[1,1]), origin = "1970-01-01"))
+    
   })
   
   # Value boxes Indicadores Exportaciones --------------------------------------------------------------------------
   
   output$valor_exportaciones <- renderValueBox({
-    valueBox(value = 10, 
+    
+    datos <- datos_exp %>% 
+      filter(Producto == input$prod) %>% 
+      tail(1)
+    
+    valueBox(value = round(as.numeric(datos[1, 3]), 4), 
              subtitle = "Exportaciones en millones de $", 
              icon = icon("dollar-sign"),
              color = "teal")
   })
   
   output$cambio_exportaciones <- renderValueBox({
-    valueBox(value = 10, 
+    
+    datos <- datos_exp %>% 
+      filter(Producto == input$prod) %>% 
+      tail(2) %>% 
+      mutate(cambio = (Monto - lag(Monto))*100/lag(Monto))
+    
+    dato <- round(as.numeric(datos[2, 4]), 1)
+    
+    valueBox(value = dato, 
              subtitle = "Tasa de cambio %", 
-             icon = icon("arrows-alt-v"),
+             icon = icon(ifelse(dato > 0, "arrow-up", ifelse(dato < 0, "arrow-down", "arrows-alt-v"))),
              color = "teal")
   })
   
-  output$nota_datos <- renderText({
+  output$fechaExp <- renderText({
+    
+    datos <- datos_exp %>% 
+        filter(Producto == input$prod) %>% 
+        tail(1)
+    
+    as.character(as.Date(as.numeric(datos[1,1]), origin = "1970-01-01"))
+  })
+  
+  output$nota_product <- renderText({
     
     as.character(input$prod)
     
   })
+  
+  output$Clasificacion <- downloadHandler(
+    
+    filename = function() {
+      paste("clasificacion-", Sys.Date(), ".csv", sep="")
+    },
+    content = function(file) {
+      write.csv(clasificacion, file)
+    }
+  )
   
   # Tab Resumen: columna datos COVID --------------------------------------------------------------------------
   
   # Value boxes Casos nuevos --------------------------------------------------------------------------
   
   output$casos_nuevos <- renderValueBox({
-    valueBox(value = datos_covid_hoy[1,1], 
+    valueBox(value = datos_covid_hoy[1,2], 
              subtitle = "Casos nuevos", 
              icon = icon("user-plus"),
              color = "maroon")
   })
   
   output$cambio_nuevos <- renderValueBox({
-    valueBox(value = datos_covid_hoy[1,2], 
+    dato <- round(as.numeric(datos_covid_hoy[1,6]), 1)
+    
+    valueBox(value = dato, 
              subtitle = "Tasa de cambio % casos nuevos", 
-             icon = icon("arrows-alt-v"),
+             icon = icon(ifelse(dato > 0, "arrow-up", ifelse(dato < 0, "arrow-down", "arrows-alt-v"))),
              color = "maroon")
   })
   
@@ -184,6 +266,12 @@ shinyServer(function(input, output, session){
              subtitle = "Personas recuperadas", 
              icon = icon("user-check"),
              color = "maroon")
+  })
+  
+  output$fechaCOVID <- renderText({
+    
+    as.character(dmy(datos_covid_hoy[1,1]))
+    
   })
   
   # Tab Resumen: graficos series de tiempo --------------------------------------------------------------------------
@@ -224,7 +312,8 @@ shinyServer(function(input, output, session){
         e_legend(right = "50") %>% 
         e_tooltip(trigger = "axis")  %>% 
         e_mark_point("Monto", data = list(type = "max")) %>% 
-        e_datazoom()
+        e_datazoom() %>% 
+        e_x_axis(max = dmy(as.character(datos_covid_hoy[1,1])))
       
     } else if (input$variables == "Exportaciones"){
       
@@ -236,7 +325,8 @@ shinyServer(function(input, output, session){
         e_legend(right = "50") %>% 
         e_tooltip(trigger = "axis")  %>% 
         e_mark_point("Monto", data = list(type = "max")) %>% 
-        e_datazoom()
+        e_datazoom() %>% 
+        e_x_axis(max = dmy(as.character(datos_covid_hoy[1,1])))
       
     }
     

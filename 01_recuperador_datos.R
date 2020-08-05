@@ -13,11 +13,12 @@ library(kableExtra)
 library(forecast)
 library(devtools)
 library(magrittr)
+library(dplyr)
 
 
 # Datos COVID -------------------------------------------------------------------------------------------------------------------------------------
 
-datosCOVID <- data.frame(read.csv("datos/datos_COVID.csv",header=TRUE,sep=";"))
+datosCOVID <- data.frame(read.csv("datos/datos_COVID.csv",header=TRUE,sep=","))
 
 # Datos para Value Boxes
 datosgenerales <- datosCOVID[, c(1, 3, 28, 32, 38)]
@@ -29,19 +30,15 @@ names(datosgenerales) <- c("Fecha","Positivos","Hospitalizados", "UCI", "Recuper
 
 fin <- nrow(datosgenerales)
 
-positivos <- datosgenerales$Positivos[fin]
-cambio_positivos <- round((positivos - datosgenerales$Positivos[fin - 1])*100 / datosgenerales$Positivos[fin - 1], 2)
-hospitalizados <- datosgenerales$Hospitalizados[fin]
-UCI <- datosgenerales$UCI[fin]
-recuperados <- datosgenerales$Recuperados[fin]
+cambio_positivos <- data.frame(cambio_positivos = round((datosgenerales$Positivos[fin] - datosgenerales$Positivos[fin - 1])*100 / datosgenerales$Positivos[fin - 1], 2))
 
-datos_covid_hoy <- data.frame(positivos = positivos, 
-                              cambio_positivos = cambio_positivos, 
-                              hospitalizados = hospitalizados,
-                              UCI = UCI,
-                              recuperados = recuperados)
+datos_covid_hoy <- tail(datosgenerales, 1)
+
+datos_covid_hoy <- cbind(datos_covid_hoy, cambio_positivos)
 
 saveRDS(datos_covid_hoy, file = "inputs_app/datos_covid_hoy.RDS")
+
+
 
 # Series de tiempo
 datosSerie <- datosCOVID%>%
@@ -59,7 +56,7 @@ graf_covid_acum <- datosSerie %>%
   e_line(serie = Recuperados, smooth=TRUE) %>% 
   e_line(serie = Fallecidos, smooth=TRUE) %>% 
   e_title(text = NULL, subtext = "Cantidad pacientes") %>% 
-  #e_theme("infographic") %>% 
+  e_x_axis(min = ymd("2020/03/01")) %>% 
   e_legend(right = "50") %>% 
   #e_mark_point(data = max) %>% marcar el dia con mas casos
   e_datazoom() %>% #barra para seleccionar el segmento de tiempo que se desea ver
@@ -77,7 +74,7 @@ graf_covid_diario <- datosSerie %>%
   e_line(serie = Nuevos_Fallecidos, smooth = TRUE, name = "Fallecidos") %>% 
   e_title(text = NULL, subtext = "Cantidad pacientes") %>% 
   #e_theme("chalk") %>% 
-  #e_theme("infographic") %>%
+  e_x_axis(min = ymd("2020/03/01")) %>% 
   e_legend(right = "50") %>% 
   e_datazoom() %>% #barra para seleccionar el segmento de tiempo que se desea ver
   e_tooltip(trigger = "axis") %>% 
@@ -87,7 +84,8 @@ graf_covid_diario <- datosSerie %>%
 
 saveRDS(graf_covid_diario, file = "inputs_app/graf_covid_diario.RDS")
 
-
+fechamin <- min(datosSerie$Fecha)
+fechamax <- max(datosSerie$Fecha)
 
 # Tipo de cambio -----------------------------------------------------------------------------
 
@@ -110,16 +108,13 @@ datos_tipocambio$fecha <- str_replace(datos_tipocambio$fecha,"Ene","Jan")
 datos_tipocambio$fecha <- str_replace(datos_tipocambio$fecha,"Abr","Apr")
 datos_tipocambio$fecha <- dmy(datos_tipocambio$fecha)
 datos_tipocambio <- na.omit(datos_tipocambio)
+
 # Indicador Compra dolar del dia actual
-fin <- nrow(datos_tipocambio)
-
-compra_dolar <- datos_tipocambio[c(fin - 1, fin),2]
-venta_dolar <- datos_tipocambio[c(fin - 1, fin),3]
-
-dato_venta_y_compra <- cbind(compra_dolar, venta_dolar)
+dato_venta_y_compra <- tail(datos_tipocambio, 2) %>% 
+  mutate(cambio_compra = (compra - lag(compra))*100/lag(compra),
+         cambio_venta = (venta - lag(venta))*100/lag(venta))
 
 saveRDS(dato_venta_y_compra, file = "inputs_app/dato_venta_y_compra.RDS") 
-
 
 ##historico dolar  
 
@@ -128,7 +123,7 @@ graf_var_ventadolar <- datos_tipocambio %>%
   e_line(venta, name = "Venta en colones", smooth = TRUE) %>%
   e_tooltip(trigger = "axis") %>%
   e_legend(right = "50") %>% 
-  #e_x_axis(name = "Fecha", nameLocation = "center", nameGap = 40) %>%
+  e_x_axis(max = fechamax) %>%
   e_y_axis(min = 540) %>%
   e_title(text = NULL, subtext = "Precio en colones") %>% 
   e_datazoom() #%>% 
@@ -141,7 +136,7 @@ graf_var_compradolar <- datos_tipocambio %>%
   e_line(compra, name = "Compra en colones", smooth = TRUE) %>%
   e_tooltip(trigger = "axis") %>%
   e_legend(right = "50") %>% 
-  #e_x_axis(name = "Fecha", nameLocation = "center", nameGap = 40) %>%
+  e_x_axis(max = fechamax) %>%
   e_y_axis(min = 540) %>%
   e_axis_labels(x = "Dia",y = "Precio en colones") %>%
   e_datazoom() #%>% 
@@ -321,21 +316,20 @@ inflacion$Fecha <- seq(from = as.Date("2004-01-01"), to = as.Date("2020-12-01"),
 # Limpiamos ambiente
 rm(inflacion_raw)
 
-#Grafico de Inflacion
+#Ultimos datos inflacion
 
 inflacion_filtrado <- inflacion %>%
   filter(Fecha > ymd("2020-02-01"),
          !is.na(Porcentaje))
 
-fin <- nrow(inflacion_filtrado)
-pasado <- inflacion_filtrado[fin-1, ]
-presente <- inflacion_filtrado[fin, ]
-
-datos_inflacion <- rbind(pasado, presente)
+datos_inflacion <- tail(inflacion_filtrado, 2) %>% 
+  mutate(cambio_inflacion = (Porcentaje - lag(Porcentaje))*100/lag(Porcentaje))
 
 saveRDS(datos_inflacion, file = "inputs_app/datos_inflacion.RDS")
 
-max_y_axis <- round(max(inflacion_graph$Porcentaje) * 1.5, digits = 1)
+#Grafico de Inflacion
+
+max_y_axis <- round(max(inflacion_filtrado$Porcentaje) * 1.5, digits = 1)
 
 graf_inflacion <- inflacion_filtrado  %>% 
   e_charts(Fecha) %>%
@@ -343,6 +337,7 @@ graf_inflacion <- inflacion_filtrado  %>%
   e_title(text = NULL, subtext = "Porcentaje Inflacional") %>% 
   #e_title("Indicador de Inflación de Socios Comerciales") %>%
   e_y_axis(max = max_y_axis) %>% 
+  e_x_axis(max = fechamax) %>% 
   e_legend(right = "50") %>% 
   e_tooltip(trigger = "axis")  %>% 
   #e_animation(duration = 5000) %>%
@@ -397,7 +392,7 @@ exporta <- gather(exporta, Producto, Monto, -Fecha)
 exporta_filtrada <- exporta %>%
   filter(Fecha > ymd("2020-02-01"))
 
-#Se guarda en RDS
+#Se guarda datos para ValueBoxes
 saveRDS(exporta_filtrada, file = "inputs_app/exporta.RDS")
 
 
